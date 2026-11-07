@@ -1,40 +1,56 @@
-<footer class="text-white mt-5" style="background-color: var(--rb-dark-navy); border-top: 4px solid var(--rb-red);">
-    <div class="container-fluid px-4 px-lg-5 py-3"> 
-        <div class="row g-4 align-items-center"> 
+</main> <!-- Menutup tag <main> yang sebelumnya kita buka di header.php -->
+
+<!-- FOOTER START -->
+<footer class="bg-[#121F45] text-white border-t-4 border-red-600 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Grid Layout (Dibagi menjadi 12 kolom untuk meniru col-md Bootstrap) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             
-            <div class="col-md-4 text-center text-md-start">
-                <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo" class="mb-2 img-fluid" style="max-height: 220px; filter: drop-shadow(0px 6px 12px rgba(0,0,0,0.4));">
-                <p class="small text-white-50 fw-bold mb-0" style="font-style: italic; font-size: 1.15rem; letter-spacing: 0.5px;">
+            <!-- Kolom 1: Logo & Tagline (Porsi 4 kolom) -->
+            <div class="md:col-span-4 text-center md:text-left">
+                <!-- Memanggil logo dari folder assets -->
+                <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo" class="mb-4 mx-auto md:mx-0 h-24 object-contain drop-shadow-lg">
+                <p class="text-gray-300 italic font-bold text-lg tracking-wide">
                     "Cuci Motor Detail, Ganti Oli Tepat, Ban Nyaman!"
                 </p>
             </div>
             
-            <div class="col-md-5">
-                <h5 class="fw-bold text-warning mb-2" style="font-size: 1.2rem;"><i class="fa fa-map-marker-alt text-danger"></i> Lokasi Kami</h5>
-                <p class="fw-semibold mb-2" style="font-size: 1.05rem; line-height: 1.4; color: rgba(255,255,255,0.9);">
+            <!-- Kolom 2: Lokasi (Porsi 5 kolom) -->
+            <div class="md:col-span-5 text-center md:text-left">
+                <h5 class="font-bold text-[#FFC906] text-xl mb-3">
+                    <i class="fa fa-map-marker-alt text-red-500 mr-2"></i> Lokasi Kami
+                </h5>
+                <p class="font-semibold text-gray-200 mb-4 leading-relaxed">
                     Jl. Ki Lemah Duwur, Pacian, Bancaran, Kec. Bangkalan,<br>
                     Kabupaten Bangkalan, Jawa Timur 69112.
                 </p>
-                <a href="https://maps.app.goo.gl/QWoUbfXx6PWQUVLf6" target="_blank" class="btn btn-warning text-dark fw-bold px-4 py-1 mt-1 rounded-3 shadow-sm">
-                    <i class="fa fa-directions"></i> Buka di Google Maps
+                <a href="https://maps.app.goo.gl/QWoUbfXx6PWQUVLf6" target="_blank" class="inline-block bg-[#FFC906] hover:bg-yellow-500 text-gray-900 font-bold px-6 py-2 rounded-lg shadow-md transition-colors">
+                    <i class="fa fa-directions mr-2"></i> Buka di Google Maps
                 </a>
             </div>
 
-            <div class="col-md-3 text-md-end text-start">
-                <h5 class="fw-bold text-warning mb-2" style="font-size: 1.2rem;"><i class="fa fa-clock"></i> Jam Buka</h5>
-                <p class="fw-bold mb-0" style="font-size: 1.1rem; color: rgba(255,255,255,0.9);">Setiap Hari Kerja</p>
-                <p class="text-white-50 fw-semibold" style="font-size: 1rem;">07.30 - 16.30 WIB</p>
+            <!-- Kolom 3: Jam Buka (Porsi 3 kolom) -->
+            <div class="md:col-span-3 text-center md:text-right">
+                <h5 class="font-bold text-[#FFC906] text-xl mb-3">
+                    <i class="fa fa-clock mr-2"></i> Jam Buka
+                </h5>
+                <p class="font-bold text-gray-200 text-lg mb-1">Setiap Hari Kerja</p>
+                <p class="text-gray-400 font-semibold text-base">07.30 - 16.30 WIB</p>
             </div>
         </div>
         
-        <hr class="border-secondary my-2">
+        <!-- Garis Pemisah -->
+        <hr class="border-gray-700 my-8">
         
+        <!-- Copyright -->
         <div class="text-center">
-            <p class="small mb-0 text-white-50 fw-semibold">© <?= date('Y'); ?> Fino Motor-cycle wash & Garage. All rights reserved.</p>
+            <p class="text-sm text-gray-400 font-semibold">
+                © <?php echo date('Y'); ?> Fino Motor-cycle wash & Garage. All rights reserved.
+            </p>
         </div>
     </div>
 </footer>
+<!-- FOOTER END -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -2,12 +2,13 @@
 // config/database.php
 
 $host = "localhost";
+$port = "3307";
 $user = "root";       // Default username XAMPP
 $pass = "";           // Default password XAMPP (kosong)
 $db   = "fino_motor"; // Nama database yang baru saja dibuat
 
 // Membuat koneksi
-$conn = mysqli_connect($host, $user, $pass, $db);
+$conn = mysqli_connect($host, $user, $pass, $db ,$port);
 
 // Cek koneksi
 if (!$conn) {
