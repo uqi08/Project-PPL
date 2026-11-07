@@ -40,14 +40,14 @@ $base_url  = '/Fino_Motor'; // Sesuaikan dengan nama folder root project kamu di
             <div class="flex items-center gap-10">
                 <!-- Logo -->
                 <a href="<?php echo $base_url; ?>/index.php" class="flex-shrink-0 flex items-center">
-                    <!-- Mengambil gambar dari folder assets -->
-                    <img class="h-12 w-auto object-contain" src="<?php echo $base_url; ?>/assets/logo_text.png" alt="Logo Fino Motor">
+                    <!-- Mengambil gambar dari folder assets, ukuran diperbesar menjadi h-16 (HP) dan h-20 (PC) -->
+                    <img class="h-16 md:h-20 w-auto object-contain drop-shadow-sm" src="<?php echo $base_url; ?>/assets/logo_text.png" alt="Logo Fino Motor">
                 </a>
 
                 <!-- Navigasi Utama (Hidden di layar HP, muncul di layar besar) -->
                 <nav class="hidden md:flex space-x-8 mt-1">
                     <a href="<?php echo $base_url; ?>/index.php" class="font-serif-nav text-white hover:text-gray-300 text-[1.1rem] tracking-wide transition-colors">Beranda</a>
-                    <!-- Mengarah ke halaman katalog[cite: 2] -->
+                    <!-- Mengarah ke halaman katalog -->
                     <a href="<?php echo $base_url; ?>/katalog.php" class="font-serif-nav text-white hover:text-gray-300 text-[1.1rem] tracking-wide transition-colors">Produk & Layanan</a>
                 </nav>
             </div>
@@ -75,7 +75,7 @@ $base_url  = '/Fino_Motor'; // Sesuaikan dengan nama folder root project kamu di
                         <a href="<?php echo $base_url; ?>/pelanggan/profil.php" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fa-solid fa-user-pen mr-2"></i> Profil Saya</a>
                         <a href="<?php echo $base_url; ?>/pelanggan/riwayat.php" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fa-solid fa-clock-rotate-left mr-2"></i> Riwayat Pesanan</a>
                         <hr class="my-1 border-gray-200">
-                        <!-- Mengarah ke proses logout[cite: 1] -->
+                        <!-- Mengarah ke proses logout -->
                         <a href="<?php echo $base_url; ?>/auth/logout.php" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-semibold"><i class="fa-solid fa-right-from-bracket mr-2"></i> Keluar</a>
                     </div>
                 </div>
