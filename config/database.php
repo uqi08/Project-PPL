@@ -1,20 +1,27 @@
+
 <?php
-// config/database.php
 
+// Konfigurasi alamat utama aplikasi
+define('BASE_URL', '/Project-PPL');
+
+// Konfigurasi database
 $host = "localhost";
-$user = "root";       // Default username XAMPP
-$pass = "";           // Default password XAMPP (kosong)
-$db   = "fino_motor"; // Nama database yang baru saja dibuat
+$user = "root";
+$pass = "";
+$db   = "fino_motor";
 
-// Membuat koneksi
+// Membuat koneksi database
 $conn = mysqli_connect($host, $user, $pass, $db);
 
-// Cek koneksi
+// Memeriksa koneksi database
 if (!$conn) {
     die("Koneksi Database Gagal: " . mysqli_connect_error());
 }
 
-// Set zona waktu default ke Waktu Indonesia Barat (WIB)
-// Sangat penting untuk fitur auto-cancel 24 jam nantinya
+// Mengatur karakter database
+mysqli_set_charset($conn, "utf8mb4");
+
+// Mengatur zona waktu WIB
 date_default_timezone_set('Asia/Jakarta');
+
 ?>

@@ -1,7 +1,18 @@
+
 <?php
-// index.php
-session_start(); // Pastikan session_start berada paling atas jika include belum memuatnya
-require 'config/database.php';
+
+// Memulai session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Memanggil konfigurasi aplikasi dan database
+require_once __DIR__ . '/config/database.php';
+
+// Mengaktifkan pesan error selama pengembangan
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // --- FITUR BARU: LOGIKA PROSES TAMBAH KE KERANJANG LANGSUNG DARI BERANDA ---
 if (isset($_POST['tambah_keranjang'])) {

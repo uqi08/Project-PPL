@@ -1,17 +1,24 @@
 <?php
-// includes/header.php
-if (session_status() == PHP_SESSION_NONE) {
+
+// Memulai session jika belum aktif
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Menghitung total item di keranjang untuk ditampilkan di Badge Header
+// Memanggil konfigurasi database dan alamat aplikasi
+require_once __DIR__ . '/../config/database.php';
+
+// Menghitung jumlah item dalam keranjang
 $cart_count = 0;
+
 if (isset($_SESSION['keranjang'])) {
     foreach ($_SESSION['keranjang'] as $qty) {
         $cart_count += $qty;
     }
 }
+
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
