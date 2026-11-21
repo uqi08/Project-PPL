@@ -139,7 +139,7 @@ $q_booking_pending = mysqli_query($conn, "SELECT t.*, u.nama_lengkap, u.no_telp 
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand text-center position-relative">
-            <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo">
+            <img src="<?= BASE_URL; ?>/assets/logo_text.png" alt="Fino Motor Logo">
             <!-- Tombol Close Sidebar (Hanya tampil di HP) -->
             <button class="btn-close btn-close-white position-absolute top-0 end-0 mt-2 me-3 d-md-none" onclick="toggleSidebar()"></button>
         </div>

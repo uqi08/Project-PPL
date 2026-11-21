@@ -184,7 +184,7 @@ $query_items = mysqli_query($conn, "SELECT * FROM items $where_clause ORDER BY t
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand text-center position-relative">
-            <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo">
+            <img src="<?= BASE_URL; ?>/assets/logo_text.png" alt="Fino Motor Logo">
             <!-- Tombol Close Sidebar (Hanya tampil di HP) -->
             <button class="btn-close btn-close-white position-absolute top-0 end-0 mt-2 me-3 d-md-none" onclick="toggleSidebar()"></button>
         </div>
@@ -253,7 +253,7 @@ $query_items = mysqli_query($conn, "SELECT * FROM items $where_clause ORDER BY t
                 <?php while ($row = mysqli_fetch_assoc($query_items)): 
                     $img_src = '';
                     if (!empty($row['gambar'])) {
-                        $img_src = filter_var($row['gambar'], FILTER_VALIDATE_URL) ? $row['gambar'] : "/Fino_Motor/assets/uploads/" . $row['gambar'];
+                        $img_src = filter_var($row['gambar'], FILTER_VALIDATE_URL) ? $row['gambar'] : BASE_URL . "/assets/uploads/" . $row['gambar'];
                     } else {
                         $img_src = "https://via.placeholder.com/400x300?text=No+Img"; 
                     }

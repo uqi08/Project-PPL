@@ -6,7 +6,7 @@ require 'config/database.php';
 // --- FITUR BARU: LOGIKA PROSES TAMBAH KE KERANJANG LANGSUNG DARI BERANDA ---
 if (isset($_POST['tambah_keranjang'])) {
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'pelanggan') {
-        echo "<script>alert('Silakan login sebagai akun pelanggan untuk melakukan pemesanan.'); window.location.href='/Fino_Motor/auth/login.php';</script>";
+        echo "<script>alert('Silakan login sebagai akun pelanggan untuk melakukan pemesanan.'); window.location.href='" . BASE_URL . "/auth/login.php';</script>";
         exit;
     }
 
@@ -191,7 +191,7 @@ $query_items = mysqli_query($conn, "SELECT * FROM items ORDER BY tipe ASC, nama_
                     if (filter_var($item['gambar'], FILTER_VALIDATE_URL)) {
                         $img_src = $item['gambar'];
                     } else {
-                        $img_src = "/Fino_Motor/assets/uploads/" . $item['gambar'];
+                        $img_src = BASE_URL . "/assets/uploads/" . $item['gambar'];
                     }
                 }
             ?>

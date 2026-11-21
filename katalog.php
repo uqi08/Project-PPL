@@ -75,7 +75,7 @@ include 'includes/header.php';
                     if (filter_var($row['gambar'], FILTER_VALIDATE_URL)) {
                         $img_src = $row['gambar'];
                     } else {
-                        $img_src = "/Fino_Motor/assets/uploads/" . $row['gambar'];
+                        $img_src = BASE_URL . "/assets/uploads/" . $row['gambar'];
                     }
                 } else {
                     $img_src = "https://via.placeholder.com/400x300?text=Fino+Motor";

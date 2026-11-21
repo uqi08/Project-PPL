@@ -104,7 +104,7 @@ $q_transaksi_terbaru = mysqli_query($conn, "
     <!-- SIDEBAR OWNER -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand text-center position-relative">
-            <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo">
+            <img src="<?= BASE_URL; ?>/assets/logo_text.png" alt="Fino Motor Logo">
             <!-- Tombol Close Sidebar (Hanya tampil di HP) -->
             <button class="btn-close btn-close-white position-absolute top-0 end-0 mt-2 me-3 d-md-none" onclick="toggleSidebar()"></button>
         </div>

@@ -105,8 +105,8 @@ if (isset($_SESSION['keranjang'])) {
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container-fluid px-4 px-lg-5">
         
-        <a class="navbar-brand d-flex align-items-center me-4 py-0" href="/Fino_Motor/index.php">
-            <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo" class="my-1">
+        <a class="navbar-brand d-flex align-items-center me-4 py-0" href="<?= BASE_URL; ?>/index.php">
+            <img src="<?= BASE_URL; ?>/assets/logo_text.png" alt="Fino Motor Logo" class="my-1">
         </a>
         
         <button class="navbar-expand-lg navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -116,10 +116,10 @@ if (isset($_SESSION['keranjang'])) {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/Fino_Motor/index.php">Beranda</a>
+                    <a class="nav-link" href="<?= BASE_URL; ?>/index.php">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/Fino_Motor/katalog.php">Produk & Layanan</a>
+                    <a class="nav-link" href="<?= BASE_URL; ?>/katalog.php">Produk & Layanan</a>
                 </li>
             </ul>
             
@@ -127,7 +127,7 @@ if (isset($_SESSION['keranjang'])) {
                 <?php if (isset($_SESSION['role'])): ?>
                     
                     <?php if ($_SESSION['role'] === 'pelanggan'): ?>
-                        <a href="/Fino_Motor/pelanggan/keranjang.php" class="text-white text-decoration-none position-relative me-3">
+                        <a href="<?= BASE_URL; ?>/pelanggan/keranjang.php" class="text-white text-decoration-none position-relative me-3">
                             <i class="fa fa-shopping-cart fs-4"></i>
                             <?php if ($cart_count > 0): ?>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm" style="font-size: 0.7rem;">
@@ -142,26 +142,26 @@ if (isset($_SESSION['keranjang'])) {
                             <i class="fa fa-user-circle text-warning fs-4 me-2"></i> <?= htmlspecialchars($_SESSION['nama_lengkap']); ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 rounded-3">
-                            <li><a class="dropdown-item fw-semibold py-2" href="/Fino_Motor/profil.php"><i class="fa fa-id-card me-2 text-primary"></i>Profil Saya</a></li>
+                            <li><a class="dropdown-item fw-semibold py-2" href="<?= BASE_URL; ?>/profil.php"><i class="fa fa-id-card me-2 text-primary"></i>Profil Saya</a></li>
                             
                             <?php if ($_SESSION['role'] === 'pelanggan'): ?>
-                                <li><a class="dropdown-item fw-semibold py-2" href="/Fino_Motor/pelanggan/riwayat.php"><i class="fa fa-history me-2 text-warning"></i>Riwayat Booking</a></li>
+                                <li><a class="dropdown-item fw-semibold py-2" href="<?= BASE_URL; ?>/pelanggan/riwayat.php"><i class="fa fa-history me-2 text-warning"></i>Riwayat Booking</a></li>
                             <?php endif; ?>
                             
                             <?php if ($_SESSION['role'] === 'owner'): ?>
-                                <li><a class="dropdown-item fw-semibold py-2" href="/Fino_Motor/owner/dashboard.php"><i class="fa fa-chart-line me-2 text-success"></i>Dashboard Owner</a></li>
+                                <li><a class="dropdown-item fw-semibold py-2" href="<?= BASE_URL; ?>/owner/dashboard.php"><i class="fa fa-chart-line me-2 text-success"></i>Dashboard Owner</a></li>
                             <?php elseif ($_SESSION['role'] === 'karyawan'): ?>
-                                <li><a class="dropdown-item fw-semibold py-2" href="/Fino_Motor/karyawan/kasir.php"><i class="fa fa-cash-register me-2 text-success"></i>Mesin Kasir</a></li>
+                                <li><a class="dropdown-item fw-semibold py-2" href="<?= BASE_URL; ?>/karyawan/kasir.php"><i class="fa fa-cash-register me-2 text-success"></i>Mesin Kasir</a></li>
                             <?php endif; ?>
                             
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger fw-bold py-2" href="/Fino_Motor/auth/logout.php"><i class="fa fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item text-danger fw-bold py-2" href="<?= BASE_URL; ?>/auth/logout.php"><i class="fa fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
                     </div>
 
                 <?php else: ?>
-                    <a href="/Fino_Motor/auth/login.php" class="btn btn-outline-rb px-4 py-2 rounded-3">Login</a>
-                    <a href="/Fino_Motor/auth/register.php" class="btn btn-rb-red px-4 py-2 rounded-3">Register</a>
+                    <a href="<?= BASE_URL; ?>/auth/login.php" class="btn btn-outline-rb px-4 py-2 rounded-3">Login</a>
+                    <a href="<?= BASE_URL; ?>/auth/register.php" class="btn btn-rb-red px-4 py-2 rounded-3">Register</a>
                 <?php endif; ?>
             </div>
         </div>

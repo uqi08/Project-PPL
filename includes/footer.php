@@ -3,7 +3,7 @@
         <div class="row g-4 align-items-center"> 
             
             <div class="col-md-4 text-center text-md-start">
-                <img src="/Fino_Motor/assets/logo_text.png" alt="Fino Motor Logo" class="mb-2 img-fluid" style="max-height: 220px; filter: drop-shadow(0px 6px 12px rgba(0,0,0,0.4));">
+                <img src="<?= BASE_URL; ?>/assets/logo_text.png" alt="Fino Motor Logo" class="mb-2 img-fluid" style="max-height: 220px; filter: drop-shadow(0px 6px 12px rgba(0,0,0,0.4));">
                 <p class="small text-white-50 fw-bold mb-0" style="font-style: italic; font-size: 1.15rem; letter-spacing: 0.5px;">
                     "Cuci Motor Detail, Ganti Oli Tepat, Ban Nyaman!"
                 </p>
