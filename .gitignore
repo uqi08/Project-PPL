@@ -1,0 +1,6 @@
+# API credentials
+/config/api.local.php
+
+# Environment files
+.env
+.env.*
