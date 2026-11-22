@@ -5,7 +5,7 @@
 define('BASE_URL', '/Project-PPL');
 
 // Konfigurasi database
-$host = "localhost:3307";
+$host = "default";
 $user = "root";
 $pass = "";
 $db   = "fino_motor";
