@@ -4,283 +4,395 @@ session_start();
 require 'config/database.php';
 require 'includes/cart_helper.php';
 
-// Hitung jumlah item di keranjang untuk badge navbar
-$ringkasan_cart  = getRingkasanKeranjang($conn);
-$total_item_cart = $ringkasan_cart['total_qty'] ?? 0;
+include 'includes/header.php';
 
-$is_logged_in = isset($_SESSION['user_id']);
-$role_user    = $_SESSION['role'] ?? 'pelanggan';
-$nama_user    = $_SESSION['nama_lengkap'] ?? $_SESSION['username'] ?? 'Pelanggan';
-
-// Ambil 8 produk unggulan (barang fisik yang stoknya tersedia & layanan populer)
-$q_unggulan = mysqli_query($conn, "
-    SELECT * FROM items 
-    WHERE (tipe = 'barang' AND stok > 0) OR tipe = 'jasa'
-    ORDER BY tipe ASC, id DESC 
-    LIMIT 8
-");
+// Ambil data produk & layanan (Dibatasi 4 untuk di beranda sebagai Produk Unggulan)
+$query_items = mysqli_query($conn, "SELECT * FROM items ORDER BY tipe ASC, nama_item ASC LIMIT 4");
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fino Motor - Toko Suku Cadang, Oli & Layanan Servis Motor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; }
-        .navbar-fino { background-color: #121F45; border-bottom: 4px solid #FFC906; }
-        .hero-section {
-            background: linear-gradient(135deg, #121F45 0%, #1d326c 65%, #274494 100%);
-            color: #ffffff;
-            border-bottom-left-radius: 32px;
-            border-bottom-right-radius: 32px;
-        }
-        .cat-card {
-            border: none;
-            border-radius: 16px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-        .cat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 22px rgba(18, 31, 69, 0.12);
-        }
-        .cat-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 12px;
-        }
-        .product-card {
-            border: none;
-            border-radius: 16px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            overflow: hidden;
-        }
-        .product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 24px rgba(18, 31, 69, 0.12);
-        }
-        .img-box { height: 185px; background-color: #e9ecef; position: relative; overflow: hidden; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .footer-fino { background-color: #121F45; color: rgba(255,255,255,0.8); border-top: 4px solid #FFC906; }
-    </style>
-</head>
-<body>
 
-<!-- NAVBAR UTAMA PEMBELI -->
-<nav class="navbar navbar-expand-lg navbar-dark navbar-fino py-3 sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
-            <img src="assets/logo.png" alt="Fino Motor" style="height: 40px;" class="me-2" onerror="this.style.display='none'">
-            <span>FINO MOTOR</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPembeli">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navPembeli">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
-                <li class="nav-item"><a class="nav-link active fw-semibold" href="index.php">Beranda</a></li>
-                <li class="nav-item"><a class="nav-link fw-semibold" href="katalog.php">Katalog Produk</a></li>
-                <li class="nav-item"><a class="nav-link fw-semibold" href="#kategori">Kategori</a></li>
-            </ul>
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <a href="pelanggan/keranjang_belanja.php" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark position-relative">
-                    <i class="fa fa-shopping-cart me-1"></i> Keranjang
-                    <?php if ($total_item_cart > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            <?= $total_item_cart; ?>
-                        </span>
-                    <?php endif; ?>
-                </a>
+<style>
+    /* Styling khusus untuk halaman Beranda */
+    .hero-section {
+        background: url('https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+        height: 80vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(18, 31, 69, 0.6);
+    }
 
-                <?php if ($is_logged_in): ?>
-                    <?php if ($role_user === 'owner'): ?>
-                        <a href="owner/dashboard.php" class="btn btn-info btn-sm rounded-pill px-3 fw-bold text-dark">Panel Owner</a>
-                    <?php elseif ($role_user === 'karyawan'): ?>
-                        <a href="karyawan/kasir.php" class="btn btn-info btn-sm rounded-pill px-3 fw-bold text-dark">Panel Kasir</a>
-                    <?php else: ?>
-                        <a href="pelanggan/pesanan_saya.php" class="btn btn-light btn-sm rounded-pill px-3 fw-bold">
-                            <i class="fa fa-receipt me-1"></i> Pesanan Saya
-                        </a>
-                    <?php endif; ?>
-                    <a href="auth/logout.php" class="btn btn-outline-danger btn-sm rounded-pill px-3">Logout</a>
-                <?php else: ?>
-                    <a href="auth/login.php" class="btn btn-outline-light btn-sm rounded-pill px-3">Login</a>
-                    <a href="auth/register.php" class="btn btn-primary btn-sm rounded-pill px-3 fw-bold">Daftar</a>
-                <?php endif; ?>
+    .hero-box {
+        background: rgba(18, 31, 69, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 201, 6, 0.3);
+        padding: 3rem 4rem;
+        border-radius: 15px;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 800px;
+    }
+
+    .section-title {
+        color: var(--rb-dark-navy);
+        text-align: center;
+        margin-bottom: 3rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    .feature-card {
+        background-color: #f1f3f5;
+        border-radius: 15px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+        border: none;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        background-color: white;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    .product-card {
+        border-radius: 15px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .product-img {
+        height: 200px;
+        background-color: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #adb5bd;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cta-banner {
+        background-color: var(--rb-dark-navy);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+        border-top: 4px solid var(--rb-red);
+        border-bottom: 4px solid var(--rb-yellow);
+    }
+
+    .testimonial-card {
+        background-color: var(--rb-navy);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        height: 100%;
+    }
+
+    .gallery-img {
+        height: 250px;
+        object-fit: cover;
+        border-radius: 15px;
+        width: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-img:hover {
+        transform: scale(1.03);
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-box shadow-lg">
+        <h1 class="text-white fw-bold mb-3 font-serif" style="font-size: 2.8rem; letter-spacing: 2px;">Perawatan Motor Premium</h1>
+        <p class="text-white-50 fs-5 mb-4 font-serif" style="font-style: italic;">Solusi tepat dari cuci kilat hingga performa mesin maksimal.</p>
+        
+        <!-- Form Pencarian Cepat ke Katalog (WBS-2.3.3) -->
+        <form method="GET" action="katalog.php" class="mx-auto" style="max-width: 500px;">
+            <div class="input-group shadow">
+                <input type="text" name="q" class="form-control border-0 ps-4 rounded-start-pill" placeholder="Cari oli, ban, atau layanan servis...">
+                <button type="submit" class="btn btn-warning fw-bold text-dark px-4 rounded-end-pill">
+                    <i class="fa fa-search me-1"></i> Cari
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container my-5 py-4">
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <i class="fa fa-medal fa-3x mb-3" style="color: var(--rb-dark-navy);"></i>
+                <h4 class="font-serif fw-bold" style="color: var(--rb-dark-navy);">Mekanik Handal</h4>
+                <p class="text-muted small mb-0">Ditangani langsung oleh mekanik berpengalaman untuk memastikan kendaraan Anda selalu dalam performa terbaik.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <i class="fa fa-tags fa-3x mb-3" style="color: var(--rb-red);"></i>
+                <h4 class="font-serif fw-bold" style="color: var(--rb-dark-navy);">Harga Bersahabat</h4>
+                <p class="text-muted small mb-0">Kualitas perawatan premium layaknya dealer resmi, namun dengan harga yang ramah di kantong.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <i class="fa fa-stopwatch fa-3x mb-3" style="color: var(--rb-yellow);"></i>
+                <h4 class="font-serif fw-bold" style="color: var(--rb-dark-navy);">Pengerjaan Cepat</h4>
+                <p class="text-muted small mb-0">Waktu Anda berharga. Kami menggunakan peralatan modern agar proses service & cuci selesai lebih efisien.</p>
             </div>
         </div>
     </div>
-</nav>
+</div>
 
-<!-- HERO SECTION & PENCARIAN CEPAT -->
-<section class="hero-section py-5 mb-5 shadow-sm">
-    <div class="container py-md-3">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-7">
-                <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill mb-3">
-                    <i class="fa fa-star me-1"></i> Bengkel & Toko Suku Cadang Terpercaya Bangkalan
-                </span>
-                <h1 class="display-5 fw-bold mb-3" style="font-family: 'Playfair Display', serif;">
-                    Rawat Performa Motormu Bersama Fino Motor
-                </h1>
-                <p class="lead text-white-50 mb-4">
-                    Belanja oli asli, ban tubeless, dan sparepart berkualitas dengan pengiriman cepat atau layanan pasang langsung di bengkel.
-                </p>
-
-                <!-- Form Pencarian Langsung ke Katalog -->
-                <form method="GET" action="katalog.php" class="mb-4" style="max-width: 540px;">
-                    <div class="input-group input-group-lg shadow">
-                        <input type="text" name="q" class="form-control border-0" placeholder="Cari oli MPX2, ban IRC, atau cuci motor...">
-                        <button type="submit" class="btn btn-warning fw-bold text-dark px-4">
-                            <i class="fa fa-search me-1"></i> Cari
-                        </button>
-                    </div>
-                </form>
-
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="katalog.php" class="btn btn-warning btn-lg rounded-pill px-4 fw-bold text-dark shadow-sm">
-                        <i class="fa fa-store me-2"></i> Jelajahi Semua Produk
-                    </a>
-                    <a href="katalog.php?kategori=Jasa" class="btn btn-outline-light btn-lg rounded-pill px-4 fw-bold">
-                        <i class="fa fa-wrench me-2"></i> Layanan Bengkel
-                    </a>
-                </div>
-            </div>
-
-            <div class="col-lg-5 text-center d-none d-lg-block">
-                <div class="bg-white bg-opacity-10 p-4 rounded-4 border border-white border-opacity-25">
-                    <img src="assets/logo.png" alt="Fino Motor" class="img-fluid mb-3" style="max-height: 150px;" onerror="this.style.display='none'">
-                    <h5 class="fw-bold text-warning mb-1">Order Online Mudah & Transparan</h5>
-                    <p class="small text-white-50 mb-0">Cek stok real-time, estimasi ongkos kirim otomatis, dan pembayaran digital aman.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- PILIHAN KATEGORI PRODUK -->
-<section id="kategori" class="container mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold m-0" style="color: #121F45;">Kategori Pilihan</h3>
-        <a href="katalog.php" class="text-decoration-none fw-bold">Lihat Semua <i class="fa fa-arrow-right ms-1"></i></a>
-    </div>
-
-    <div class="row row-cols-2 row-cols-md-5 g-3">
-        <?php
-        $kategori_cards = [
-            ['nama' => 'Oli',             'icon' => 'fa-oil-can',       'bg' => 'bg-warning bg-opacity-25 text-warning'],
-            ['nama' => 'Ban',             'icon' => 'fa-compact-disc',  'bg' => 'bg-primary bg-opacity-10 text-primary'],
-            ['nama' => 'Sparepart',       'icon' => 'fa-cogs',          'bg' => 'bg-danger bg-opacity-10 text-danger'],
-            ['nama' => 'Perawatan Motor', 'icon' => 'fa-spray-can',     'bg' => 'bg-info bg-opacity-10 text-info'],
-            ['nama' => 'Jasa',            'icon' => 'fa-tools',         'bg' => 'bg-success bg-opacity-10 text-success'],
-        ];
-        foreach ($kategori_cards as $kc):
-        ?>
-        <div class="col">
-            <a href="katalog.php?kategori=<?= urlencode($kc['nama']); ?>" class="text-decoration-none text-dark">
-                <div class="card cat-card bg-white shadow-sm p-4 text-center h-100">
-                    <div class="cat-icon <?= $kc['bg']; ?>">
-                        <i class="fa <?= $kc['icon']; ?>"></i>
-                    </div>
-                    <h6 class="fw-bold mb-0"><?= htmlspecialchars($kc['nama']); ?></h6>
-                </div>
-            </a>
-        </div>
-        <?php endforeach; ?>
-    </div>
-</section>
-
-<!-- PRODUK & LAYANAN UNGGULAN (WBS-2.3) -->
-<section class="container pb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold m-0" style="color: #121F45;">Produk & Layanan Terbaru</h3>
-            <small class="text-muted">Pilih produk untuk melihat detail atau langsung masukkan ke keranjang</small>
-        </div>
-        <a href="katalog.php" class="btn btn-outline-primary rounded-pill px-4 fw-bold">Katalog Lengkap</a>
-    </div>
-
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <?php if ($q_unggulan && mysqli_num_rows($q_unggulan) > 0): ?>
-            <?php while ($item = mysqli_fetch_assoc($q_unggulan)):
-                $foto = !empty($item['gambar'])
-                    ? (filter_var($item['gambar'], FILTER_VALIDATE_URL) ? $item['gambar'] : "assets/uploads/" . $item['gambar'])
-                    : "https://via.placeholder.com/400x300?text=Fino+Motor";
+<div class="container my-5 py-4" style="background-color: rgba(248, 249, 250, 0.5); border-radius: 20px;">
+    <h2 class="section-title">Produk Unggulan Fino Motor</h2>
+    <div class="row g-4">
+        <?php if ($query_items && mysqli_num_rows($query_items) > 0): ?>
+            <?php while($item = mysqli_fetch_assoc($query_items)): 
+                // PARSER GAMBAR: Deteksi URL Internet vs Upload File Lokal di Project-PPL
+                $img_src = '';
+                if (!empty($item['gambar'])) {
+                    if (filter_var($item['gambar'], FILTER_VALIDATE_URL)) {
+                        $img_src = $item['gambar'];
+                    } else {
+                        $img_src = "assets/uploads/" . $item['gambar'];
+                    }
+                }
                 $is_barang = ($item['tipe'] === 'barang');
+                $stok      = (int)$item['stok'];
+                $habis     = ($is_barang && $stok <= 0);
             ?>
-            <div class="col">
-                <div class="card product-card h-100 bg-white shadow-sm">
-                    <a href="detail_produk.php?id=<?= $item['id']; ?>" class="text-decoration-none">
-                        <div class="img-box">
-                            <img src="<?= htmlspecialchars($foto); ?>" alt="<?= htmlspecialchars($item['nama_item']); ?>">
-                            <span class="position-absolute top-0 start-0 m-2 badge <?= $is_barang ? 'bg-primary' : 'bg-success'; ?>">
-                                <?= htmlspecialchars($item['kategori']); ?>
-                            </span>
-                            <?php if ($is_barang): ?>
-                                <span class="position-absolute bottom-0 end-0 m-2 badge bg-dark bg-opacity-75">
-                                    Stok: <?= (int)$item['stok']; ?>
-                                </span>
-                            <?php endif; ?>
-                        </div>
-                    </a>
+                <div class="col-md-3">
+                    <div class="card product-card h-100">
+                        <!-- Klik gambar menuju Detail Produk (WBS-2.3.2) -->
+                        <a href="detail_produk.php?id=<?= $item['id']; ?>" class="text-decoration-none">
+                            <div class="product-img">
+                                <?php if (!empty($img_src)): ?>
+                                    <img src="<?= htmlspecialchars($img_src); ?>" alt="<?= htmlspecialchars($item['nama_item']); ?>">
+                                <?php else: ?>
+                                    <i class="fa <?= $item['tipe'] == 'jasa' ? 'fa-tools' : 'fa-oil-can'; ?> fa-4x opacity-50"></i>
+                                <?php endif; ?>
 
-                    <div class="card-body d-flex flex-column p-3">
-                        <a href="detail_produk.php?id=<?= $item['id']; ?>" class="text-decoration-none text-dark">
-                            <h6 class="fw-bold mb-1 lh-sm"><?= htmlspecialchars($item['nama_item']); ?></h6>
+                                <?php if ($is_barang): ?>
+                                    <span class="badge position-absolute bottom-0 end-0 m-2 <?= $habis ? 'bg-danger' : 'bg-dark bg-opacity-75'; ?>">
+                                        <?= $habis ? 'Stok Habis' : 'Stok: ' . $stok; ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
                         </a>
-                        <p class="text-muted small mb-2 text-truncate">
-                            <?= htmlspecialchars($item['deskripsi'] ?? 'Produk & layanan terbaik Fino Motor.'); ?>
-                        </p>
-                        <div class="mt-auto pt-2 border-top">
-                            <div class="fw-bold fs-5 text-success">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></div>
-                            <?php if ((int)$item['is_oli'] === 1 && (int)$item['harga_pasang'] > 0): ?>
-                                <small class="text-danger fw-semibold d-block">+ Pasang: Rp <?= number_format($item['harga_pasang'], 0, ',', '.'); ?></small>
-                            <?php endif; ?>
-                        </div>
-                    </div>
 
-                    <div class="card-footer bg-white border-0 pt-0 pb-3 px-3 d-flex gap-2">
-                        <a href="detail_produk.php?id=<?= $item['id']; ?>" class="btn btn-outline-secondary btn-sm w-50 fw-bold rounded-3">
-                            Detail
-                        </a>
-                        <form method="POST" action="pelanggan/proses_keranjang.php" class="w-50">
-                            <input type="hidden" name="aksi" value="tambah">
-                            <input type="hidden" name="item_id" value="<?= $item['id']; ?>">
-                            <input type="hidden" name="qty" value="1">
-                            <input type="hidden" name="opsi" value="<?= (int)$item['is_oli'] === 1 ? 'saja' : 'normal'; ?>">
-                            <input type="hidden" name="redirect" value="keranjang_belanja.php">
-                            <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold text-dark rounded-3">
-                                <i class="fa fa-cart-plus me-1"></i> Beli
-                            </button>
-                        </form>
+                        <div class="card-body text-center d-flex flex-column pt-4">
+                            <a href="detail_produk.php?id=<?= $item['id']; ?>" class="text-decoration-none">
+                                <h5 class="card-title font-serif fw-bold text-dark mb-1"><?= htmlspecialchars($item['nama_item']); ?></h5>
+                            </a>
+                            
+                            <?php if (isset($item['is_oli']) && (int)$item['is_oli'] === 1): ?>
+                                <div class="mt-2 mb-3 text-start bg-light p-2 rounded border" style="font-size: 0.85rem;">
+                                    <span class="text-muted d-block">Oli Saja: <b class="text-success">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></b></span>
+                                    <span class="text-muted d-block">Plus Pasang: <b class="text-danger">Rp <?= number_format($item['harga_pasang'], 0, ',', '.'); ?></b></span>
+                                </div>
+                            <?php else: ?>
+                                <h4 class="fw-bold mt-auto mb-3" style="color: var(--rb-red);">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></h4>
+                            <?php endif; ?>
+                            
+                            <div class="mt-auto d-flex flex-column gap-2">
+                                <a href="detail_produk.php?id=<?= $item['id']; ?>" class="btn btn-outline-secondary btn-sm w-100 rounded-pill fw-bold">
+                                    <i class="fa fa-eye me-1"></i> Detail Produk
+                                </a>
+
+                                <?php if ($habis): ?>
+                                    <button class="btn btn-secondary w-100 rounded-pill" disabled>Stok Habis</button>
+                                <?php elseif (isset($item['is_oli']) && (int)$item['is_oli'] === 1): ?>
+                                    <button type="button" class="btn btn-outline-dark w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#modalOliBeranda<?= $item['id']; ?>">
+                                        <i class="fa fa-sliders-h me-1"></i> Pilih Opsi Oli
+                                    </button>
+                                <?php else: ?>
+                                    <!-- Tersambung ke WBS-2.4 (pelanggan/proses_keranjang.php) -->
+                                    <form method="POST" action="pelanggan/proses_keranjang.php">
+                                        <input type="hidden" name="aksi" value="tambah">
+                                        <input type="hidden" name="item_id" value="<?= $item['id']; ?>">
+                                        <input type="hidden" name="qty" value="1">
+                                        <input type="hidden" name="opsi" value="normal">
+                                        <input type="hidden" name="redirect" value="keranjang_belanja.php">
+                                        <button type="submit" class="btn btn-rb-red w-100 rounded-pill">Pesan Sekarang</button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <?php if (isset($item['is_oli']) && (int)$item['is_oli'] === 1): ?>
+                <div class="modal fade" id="modalOliBeranda<?= $item['id']; ?>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 border-0 shadow-lg text-start">
+                            <div class="modal-header text-white" style="background-color: #121F45;">
+                                <h5 class="modal-title font-serif fw-bold"><i class="fa fa-oil-can text-warning me-2"></i> Opsi Pembelian Oli</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="pelanggan/proses_keranjang.php">
+                                <input type="hidden" name="aksi" value="tambah">
+                                <input type="hidden" name="item_id" value="<?= $item['id']; ?>">
+                                <input type="hidden" name="redirect" value="keranjang_belanja.php">
+                                <div class="modal-body p-4">
+                                    <div class="text-center mb-4">
+                                        <?php if (!empty($img_src)): ?>
+                                            <img src="<?= htmlspecialchars($img_src); ?>" class="rounded-3 shadow-sm mb-2" style="width: 110px; height: 120px; object-fit: cover;">
+                                        <?php endif; ?>
+                                        <h4 class="fw-bold text-dark mb-1"><?= htmlspecialchars($item['nama_item']); ?></h4>
+                                        <p class="text-muted small">Pilih jenis layanan penggantian di bawah</p>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="p-3 border rounded-3 mb-2 bg-light d-flex align-items-center justify-content-between">
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input" type="radio" name="opsi" id="opsiSajaIdx<?= $item['id']; ?>" value="saja" checked>
+                                                <label class="form-check-label fw-bold text-dark" for="opsiSajaIdx<?= $item['id']; ?>">Bawa Pulang (Oli Saja)</label>
+                                            </div>
+                                            <span class="text-success fw-bold">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></span>
+                                        </div>
+
+                                        <div class="p-3 border border-danger bg-danger bg-opacity-10 rounded-3 d-flex align-items-center justify-content-between">
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input" type="radio" name="opsi" id="opsiPasangIdx<?= $item['id']; ?>" value="pasang">
+                                                <label class="form-check-label fw-bold text-dark" for="opsiPasangIdx<?= $item['id']; ?>">Ganti di Bengkel (+ Jasa Pasang)</label>
+                                            </div>
+                                            <span class="text-danger fw-bold">Rp <?= number_format($item['harga_pasang'], 0, ',', '.'); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold text-secondary">Kuantitas (Qty)</label>
+                                        <input type="number" name="qty" class="form-control text-center fw-bold" value="1" min="1" max="<?= max(1, $stok); ?>" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-light">
+                                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-danger fw-bold px-4"><i class="fa fa-cart-plus me-1"></i> Tambah Keranjang</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
             <?php endwhile; ?>
         <?php else: ?>
-            <div class="col-12 text-center py-4 text-muted">Belum ada produk tersedia.</div>
+            <div class="col-12 text-center text-muted">Belum ada produk di database.</div>
         <?php endif; ?>
     </div>
-</section>
+</div>
 
-<!-- FOOTER -->
-<footer class="footer-fino py-4 mt-auto">
-    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-            <strong class="text-warning">FINO MOTOR</strong> — Bengkel Servis & Suku Cadang Motor, Bangkalan.
-        </div>
-        <small class="text-white-50">© <?= date('Y'); ?> Fino Motor. All rights reserved.</small>
+<div class="cta-banner my-5">
+    <div class="container">
+        <h2 class="font-serif fw-bold mb-3" style="color: var(--rb-yellow);">JELAJAHI LAYANAN KAMI!</h2>
+        <p class="fs-5 mb-4 font-serif" style="font-style: italic;">Ingin melihat berbagai pilihan oli dan daftar harga service lengkap dari Fino Motor?<br>Silakan klik tombol katalog di bawah ini.</p>
+        <a href="katalog.php" class="btn btn-light btn-lg fw-bold px-5 rounded-pill" style="color: var(--rb-dark-navy);">Lihat Katalog Penuh</a>
     </div>
-</footer>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<div class="container my-5 py-4">
+    <h2 class="section-title">Galeri Fino Motor</h2>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <img src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?q=80&w=600&auto=format&fit=crop" class="gallery-img shadow-sm" alt="Galeri 1">
+        </div>
+        <div class="col-md-3">
+            <img src="https://images.unsplash.com/photo-1599256872237-5dcc0fbe9668?q=80&w=600&auto=format&fit=crop" class="gallery-img shadow-sm" alt="Galeri 2">
+        </div>
+        <div class="col-md-3">
+            <img src="https://images.unsplash.com/photo-1632249622959-1e359ab8f8ec?q=80&w=600&auto=format&fit=crop" class="gallery-img shadow-sm" alt="Galeri 3">
+        </div>
+        <div class="col-md-3">
+            <img src="https://images.unsplash.com/photo-1508821430932-b258597305aa?q=80&w=600&auto=format&fit=crop" class="gallery-img shadow-sm" alt="Galeri 4">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid py-5 my-5" style="background-color: #e9ecef;">
+    <div class="container">
+        <h2 class="section-title mb-5">Apa Kata Pelanggan Kami?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="testimonial-card shadow">
+                    <div class="text-center mb-3 text-warning">
+                        <i class="fa fa-quote-left fa-2x"></i>
+                    </div>
+                    <p class="font-serif text-center mb-4" style="font-style: italic; font-size: 1.1rem;">"Oli mesin yang disarankan mekaniknya mantap! Tarikan motor jadi enteng banget buat jalan jauh."</p>
+                    <div class="text-center">
+                        <h6 class="fw-bold mb-0 text-warning">Budi S.</h6>
+                        <small class="text-white-50">Surabaya</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card shadow">
+                    <div class="text-center mb-3 text-warning">
+                        <i class="fa fa-quote-left fa-2x"></i>
+                    </div>
+                    <p class="font-serif text-center mb-4" style="font-style: italic; font-size: 1.1rem;">"Cuci saljunya bersih sampai ke sela-sela mesin. Nyaman banget sambil nunggu bisa santai."</p>
+                    <div class="text-center">
+                        <h6 class="fw-bold mb-0 text-warning">Ahmad Dani</h6>
+                        <small class="text-white-50">Bangkalan</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card shadow">
+                    <div class="text-center mb-3 text-warning">
+                        <i class="fa fa-quote-left fa-2x"></i>
+                    </div>
+                    <p class="font-serif text-center mb-4" style="font-style: italic; font-size: 1.1rem;">"Booking oli lewat web gampang banget. Datang ke lokasi tinggal pasang tanpa harus antre lama."</p>
+                    <div class="text-center">
+                        <h6 class="fw-bold mb-0 text-warning">Siti N.</h6>
+                        <small class="text-white-50">Arosbaya</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 text-center">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6">
+            <h4 class="font-serif fw-bold mb-3" style="color: var(--rb-dark-navy);">Dapatkan Info Promo Terbaru</h4>
+            <div class="input-group mb-3 shadow-sm rounded-pill overflow-hidden">
+                <input type="email" class="form-control border-0 px-4" placeholder="Masukkan email @gmail.com Anda">
+                <button class="btn btn-rb-red px-4 fw-bold" type="button">Subscribe</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="font-serif fw-bold mb-3" style="color: var(--rb-dark-navy);">Tentang Fino Motor</h3>
+            <p class="text-muted" style="line-height: 1.8;">
+                Fino Motor berdiri dengan komitmen memberikan solusi perawatan kendaraan roda dua terbaik di area Bangkalan dan sekitarnya. 
+                Kami percaya setiap pengendara berhak mendapatkan suku cadang yang terjamin keasliannya dan pelayanan prima dengan harga yang transparan. 
+                Percayakan perawatan motor Anda kepada kami, karena kualitas mesin adalah prioritas utama Fino Motor.
+            </p>
+        </div>
+    </div>
+</div>
+
+<?php 
+include 'includes/footer.php'; 
+?>

@@ -21,9 +21,6 @@ if (!$produk) {
     exit;
 }
 
-$ringkasan_cart = getRingkasanKeranjang($conn);
-$total_item_cart = $ringkasan_cart['total_qty'] ?? 0;
-
 $foto = !empty($produk['gambar'])
     ? (filter_var($produk['gambar'], FILTER_VALIDATE_URL) ? $produk['gambar'] : "assets/uploads/" . $produk['gambar'])
     : "https://via.placeholder.com/600x450?text=Fino+Motor";
@@ -38,41 +35,18 @@ $stmt_rel = mysqli_prepare($conn, "SELECT * FROM items WHERE kategori = ? AND id
 mysqli_stmt_bind_param($stmt_rel, "si", $produk['kategori'], $id_produk);
 mysqli_stmt_execute($stmt_rel);
 $res_related = mysqli_stmt_get_result($stmt_rel);
+
+// Memanggil header/navbar utama Fino Motor
+include 'includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($produk['nama_item']); ?> - Detail Produk Fino Motor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; }
-        .navbar-fino { background-color: #121F45; border-bottom: 4px solid #FFC906; }
-        .detail-card { border: none; border-radius: 20px; }
-        .detail-img-wrap { background-color: #f8f9fa; border-radius: 16px; overflow: hidden; height: 360px; display: flex; align-items: center; justify-content: center; }
-        .detail-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    </style>
-</head>
-<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-fino py-3 sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="index.php"><i class="fa fa-motorcycle text-warning me-2"></i>FINO MOTOR</a>
-        <div class="ms-auto d-flex gap-2">
-            <a href="katalog.php" class="btn btn-outline-light btn-sm rounded-pill px-3">Katalog</a>
-            <a href="pelanggan/keranjang_belanja.php" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark position-relative">
-                <i class="fa fa-shopping-cart me-1"></i> Keranjang
-                <?php if ($total_item_cart > 0): ?>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $total_item_cart; ?></span>
-                <?php endif; ?>
-            </a>
-        </div>
-    </div>
-</nav>
+<style>
+    .detail-card { border: none; border-radius: 20px; }
+    .detail-img-wrap { background-color: #f8f9fa; border-radius: 16px; overflow: hidden; height: 360px; display: flex; align-items: center; justify-content: center; }
+    .detail-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+</style>
 
-<div class="container py-4">
+<div class="container py-4 my-2">
     <!-- Breadcrumb Navigasi -->
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb small">
@@ -106,7 +80,7 @@ $res_related = mysqli_stmt_get_result($stmt_rel);
                     <?php endif; ?>
                 </div>
 
-                <h2 class="fw-bold text-dark mb-3"><?= htmlspecialchars($produk['nama_item']); ?></h2>
+                <h2 class="font-serif fw-bold text-dark mb-3"><?= htmlspecialchars($produk['nama_item']); ?></h2>
 
                 <div class="bg-light p-3 rounded-4 mb-3">
                     <small class="text-muted d-block">Harga Produk</small>
@@ -135,7 +109,7 @@ $res_related = mysqli_stmt_get_result($stmt_rel);
                     <form method="POST" action="pelanggan/proses_keranjang.php">
                         <input type="hidden" name="aksi" value="tambah">
                         <input type="hidden" name="item_id" value="<?= $produk['id']; ?>">
-                        <input type="hidden" name="redirect" value="keranjang_belanja.php">
+                        <input type="hidden" name="redirect" value="keranjang.php">
 
                         <?php if ($is_oli): ?>
                             <div class="mb-3">
@@ -185,7 +159,7 @@ $res_related = mysqli_stmt_get_result($stmt_rel);
 
     <!-- Produk Terkait -->
     <?php if (mysqli_num_rows($res_related) > 0): ?>
-        <h5 class="fw-bold mb-3" style="color: #121F45;">Produk Serupa di Kategori <?= htmlspecialchars($produk['kategori']); ?></h5>
+        <h5 class="font-serif fw-bold mb-3" style="color: #121F45;">Produk Serupa di Kategori <?= htmlspecialchars($produk['kategori']); ?></h5>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
             <?php while ($rel = mysqli_fetch_assoc($res_related)):
                 $rel_foto = !empty($rel['gambar'])
@@ -213,5 +187,8 @@ function ubahHarga(nominal) {
     document.getElementById('tampilHarga').innerText = 'Rp ' + nominal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 </script>
-</body>
-</html>
+
+<?php
+// Memanggil footer utama Fino Motor
+include 'includes/footer.php';
+?>
