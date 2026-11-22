@@ -163,7 +163,7 @@ unset($_SESSION['flash_cart']);
                     </div>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="checkout.php" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">
+                        <a href="checkout_pesanan.php" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">
                             Lanjut ke Checkout <i class="fa fa-arrow-right ms-2"></i>
                         </a>
                     <?php else: ?>

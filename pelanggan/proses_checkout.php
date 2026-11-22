@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: checkout.php");
+    header("Location: checkout_pesanan.php");
     exit;
 }
 
@@ -40,7 +40,7 @@ if (empty($ringkasan['items'])) {
 
 if (!empty($errors)) {
     $_SESSION['flash_checkout'] = ['tipe' => 'danger', 'pesan' => implode(' ', $errors)];
-    header("Location: checkout.php");
+    header("Location: checkout_pesanan.php");
     exit;
 }
 
@@ -142,7 +142,7 @@ try {
 } catch (Exception $e) {
     mysqli_rollback($conn);
     $_SESSION['flash_checkout'] = ['tipe' => 'danger', 'pesan' => $e->getMessage()];
-    header("Location: checkout.php");
+    header("Location: checkout_pesanan.php");
     exit;
 }
 ?>
