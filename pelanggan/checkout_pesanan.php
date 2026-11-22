@@ -20,40 +20,25 @@ mysqli_stmt_close($stmt_u);
 $ringkasan = getRingkasanKeranjang($conn);
 $flash = $_SESSION['flash_checkout'] ?? null;
 unset($_SESSION['flash_checkout']);
+
+// Memanggil header/navbar utama Fino Motor
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Penerima & Checkout - Fino Motor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; }
-        .navbar-fino { background-color: #121F45; border-bottom: 4px solid #FFC906; }
-        .card-clean { border: none; border-radius: 16px; }
-        .area-dropdown { position: absolute; z-index: 1000; width: 100%; max-height: 220px; overflow-y: auto; }
-    </style>
-</head>
-<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-fino py-3 mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="../index.php"><i class="fa fa-motorcycle text-warning me-2"></i>FINO MOTOR</a>
-        <div class="ms-auto d-flex gap-2">
-            <a href="keranjang_belanja.php" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                <i class="fa fa-arrow-left me-1"></i> Kembali ke Keranjang
-            </a>
-            <a href="pesanan_saya.php" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark">Pesanan Saya</a>
-        </div>
+<style>
+    .card-clean { border: none; border-radius: 16px; }
+    .area-dropdown { position: absolute; z-index: 1000; width: 100%; max-height: 220px; overflow-y: auto; }
+</style>
+
+<div class="container my-5 pb-4" style="min-height: 70vh;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <h3 class="font-serif fw-bold m-0" style="color: var(--rb-dark-navy);">
+            <i class="fa fa-address-card text-warning me-2"></i>Data Penerima & Pengiriman
+        </h3>
+        <a href="keranjang.php" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">
+            <i class="fa fa-arrow-left me-1"></i> Kembali ke Keranjang
+        </a>
     </div>
-</nav>
-
-<div class="container pb-5">
-    <h3 class="fw-bold mb-4" style="color: #121F45;">
-        <i class="fa fa-address-card text-warning me-2"></i>Data Penerima & Pengiriman
-    </h3>
 
     <?php if ($flash): ?>
         <div class="alert alert-<?= htmlspecialchars($flash['tipe']); ?> rounded-4 shadow-sm fw-bold">
@@ -74,7 +59,7 @@ unset($_SESSION['flash_checkout']);
                 <!-- KIRI: FORM DATA PENERIMA & ALAMAT (WBS-2.5.1) -->
                 <div class="col-lg-7">
                     <div class="card card-clean shadow-sm p-4 bg-white mb-4">
-                        <h5 class="fw-bold mb-3">1. Informasi Penerima & Alamat Pengiriman</h5>
+                        <h5 class="fw-bold mb-3 font-serif text-dark">1. Informasi Penerima & Alamat Pengiriman</h5>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
@@ -135,8 +120,8 @@ unset($_SESSION['flash_checkout']);
 
                 <!-- KANAN: RINGKASAN TRANSAKSI (WBS-2.5.2) -->
                 <div class="col-lg-5">
-                    <div class="card card-clean shadow-sm p-4 bg-white">
-                        <h5 class="fw-bold mb-3">2. Ringkasan Pesanan</h5>
+                    <div class="card card-clean shadow-sm p-4 bg-white border-top border-5 border-warning">
+                        <h5 class="fw-bold mb-3 font-serif text-dark">2. Ringkasan Pesanan</h5>
                         <ul class="list-group list-group-flush mb-3">
                             <?php foreach ($ringkasan['items'] as $itm): ?>
                                 <li class="list-group-item px-0 d-flex justify-content-between align-items-start">
@@ -296,5 +281,8 @@ inputCari?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); cariArea(); }
 });
 </script>
-</body>
-</html>
+
+<?php
+// Memanggil footer utama Fino Motor
+include '../includes/footer.php';
+?>
